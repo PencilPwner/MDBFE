@@ -18,17 +18,24 @@
             event.preventDefault();
 
             const username = document.getElementById('username').value.trim();
-            const webhookUrl = 'YOUR_DISCORD_WEBHOOK_URL'; // Replace with your Discord webhook URL
+            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
 
             function getMinecraftUUID(username) {
-                return fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
+                return fetch(`https://playerdb.co/api/player/minecraft/${username}`)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
                     })
-                    .then(data => data.id)
+                    .then(data => {
+                        // Access the UUID from raw_id
+                        if (data && data.data && data.data.raw_id) {
+                            return data.data.raw_id;
+                        } else {
+                            throw new Error('UUID not found in response');
+                        }
+                    })
                     .catch(error => {
                         console.error('Error fetching UUID:', error);
                         return null;
