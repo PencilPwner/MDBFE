@@ -29,9 +29,9 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Access the UUID from raw_id
-                        if (data && data.data && data.data.raw_id) {
-                            return data.data.raw_id;
+                        // Access the UUID from data.player.meta.raw_id
+                        if (data && data.player && data.player.meta && data.player.meta.raw_id) {
+                            return data.player.meta.raw_id;
                         } else {
                             throw new Error('UUID not found in response');
                         }
