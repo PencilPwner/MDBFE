@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Username to Discord Webhook</title>
+</head>
+<body>
+    <h1>Send Minecraft Username to Discord Webhook</h1>
+    <form id="usernameForm">
+        <label for="username">Minecraft Username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        document.getElementById('usernameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Replace with your Discord webhook URL
+
+            // You might need to use a Minecraft API to get the UUID
+            const minecraftUUID = 'PLACEHOLDER_UUID'; // Replace with logic to get the UUID
+
+            const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username}`;
+            
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Message sent successfully');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Failed to send message');
+            });
+        });
+    </script>
+</body>
+</html>
