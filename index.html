@@ -3,76 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Usernames to Discord Webhook</title>
+    <title>Scrape and Send Results to Discord Webhook</title>
 </head>
 <body>
-    <h1>Send Minecraft Usernames to Discord Webhook</h1>
-    <form id="usernameForm">
-        <label for="usernames">Minecraft Usernames (one per line):</label><br>
-        <textarea id="usernames" name="usernames" rows="10" cols="50" required></textarea><br>
-        <button type="submit">Send</button>
+    <h1>Scrape and Send Results to Discord Webhook</h1>
+    <button id="startScraping">Start Scraping</button>
+
+    <form id="usernameForm" style="display: none;">
+        <label for="results">Results:</label><br>
+        <textarea id="results" name="results" rows="10" cols="50" required></textarea><br>
+        <button type="submit">Send to Discord</button>
     </form>
 
     <script>
+        document.getElementById('startScraping').addEventListener('click', async function() {
+            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
+            const pattern = /(?<user>\S+)'s Networth on (?<profile>[\w\s]+)/;
+            const processedMessages = new Set();
+            const totalMessagesToScrape = 100;
+            const batchSize = 25;
+            let messagesCount = 0;
+            const results = []; // Array to hold results
+
+            async function loadMoreMessages() {
+                window.scrollTo(0, document.body.scrollHeight);
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Adjust timeout as necessary
+            }
+
+            function isMessageElement(element) {
+                const text = element.innerText.trim();
+                return text && !text.startsWith("[") && !text.includes("sentry");
+            }
+
+            while (messagesCount < totalMessagesToScrape) {
+                let batchMessages = 0;
+                const seenMessages = new Set();
+
+                while (batchMessages < batchSize && messagesCount < totalMessagesToScrape) {
+                    await loadMoreMessages();
+
+                    const elements = document.querySelectorAll(".embedTitle_b0068a");
+
+                    if (elements.length === 0) {
+                        console.error("No messages found. Check the selector or inspect the message elements again.");
+                        break;
+                    }
+
+                    elements.forEach(element => {
+                        if (!isMessageElement(element)) {
+                            return;
+                        }
+
+                        const text = element.innerText;
+                        if (processedMessages.has(text)) {
+                            return;
+                        }
+
+                        const match = pattern.exec(text);
+                        if (match) {
+                            const user = match.groups.user;
+                            const profile = match.groups.profile;
+
+                            if (!profile.toLowerCase().includes("sentry") && user.toLowerCase() !== "hltbox") {
+                                console.log(`User: ${user}, Profile: ${profile}`);
+                                processedMessages.add(text);
+                                seenMessages.add(text);
+                                messagesCount++;
+                                batchMessages++;
+
+                                // Add the result to the results array
+                                results.push(`User: ${user}, Profile: ${profile}`);
+                            }
+                        }
+                    });
+
+                    if (batchMessages === 0) {
+                        break;
+                    }
+                }
+
+                if (seenMessages.size === 0) {
+                    console.log("No new messages found. Exiting.");
+                    break;
+                }
+            }
+
+            // Populate the textarea with results and display the form
+            document.getElementById('results').value = results.join('\n');
+            document.getElementById('usernameForm').style.display = 'block';
+            console.log("Finished scraping. Please review results and send to Discord.");
+        });
+
         document.getElementById('usernameForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const usernames = document.getElementById('usernames').value.trim().split('\n');
             const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
+            const results = document.getElementById('results').value.trim().split('\n');
 
-            function getMinecraftUUID(username) {
-                return fetch(`https://playerdb.co/api/player/minecraft/${username}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Access the UUID from data.player.meta.raw_id
-                        if (data && data.data && data.data.player && data.data.data.player.meta && data.data.data.player.meta.raw_id) {
-                            return data.data.player.meta.raw_id;
-                        } else {
-                            throw new Error('UUID not found in response');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching UUID:', error);
-                        return null;
-                    });
-            }
-
-            function sendToDiscord(username, uuid) {
-                const message = `${username}.${uuid}.https://sky.shiiyu.moe/stats/${username}`;
-                return fetch(webhookUrl, {
+            // Send each result to Discord
+            results.forEach(result => {
+                fetch(webhookUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ content: message })
+                    body: JSON.stringify({ content: result })
                 });
-            }
+            });
 
-            function processUsernames(usernames) {
-                return Promise.all(usernames.map(username => {
-                    return getMinecraftUUID(username).then(uuid => {
-                        if (uuid) {
-                            return sendToDiscord(username, uuid);
-                        } else {
-                            console.error(`Failed to retrieve UUID for username: ${username}`);
-                        }
-                    });
-                }));
-            }
-
-            processUsernames(usernames)
-                .then(() => {
-                    alert('All messages sent successfully');
-                })
-                .catch(error => {
-                    console.error('Error processing usernames:', error);
-                    alert('Failed to send all messages');
-                });
+            alert('All results sent to Discord.');
         });
     </script>
 </body>
