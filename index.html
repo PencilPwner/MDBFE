@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft Username to Discord Webhook</title>
+    <title>Minecraft Usernames to Discord Webhook</title>
 </head>
 <body>
-    <h1>Send Minecraft Username to Discord Webhook</h1>
+    <h1>Send Minecraft Usernames to Discord Webhook</h1>
     <form id="usernameForm">
-        <label for="username">Minecraft Username:</label>
-        <input type="text" id="username" name="username" required>
+        <label for="usernames">Minecraft Usernames (one per line):</label><br>
+        <textarea id="usernames" name="usernames" rows="10" cols="50" required></textarea><br>
         <button type="submit">Send</button>
     </form>
 
@@ -17,7 +17,7 @@
         document.getElementById('usernameForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const username = document.getElementById('username').value.trim();
+            const usernames = document.getElementById('usernames').value.trim().split('\n');
             const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
 
             function getMinecraftUUID(username) {
@@ -29,9 +29,9 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Access the UUID from data.player.raw_id
-                        if (data && data.data && data.data.player && data.data.player.raw_id) {
-                            return data.data.player.raw_id;
+                        // Access the UUID from data.player.meta.raw_id
+                        if (data && data.data && data.data.player && data.data.data.player.meta && data.data.data.player.meta.raw_id) {
+                            return data.data.player.meta.raw_id;
                         } else {
                             throw new Error('UUID not found in response');
                         }
@@ -42,34 +42,37 @@
                     });
             }
 
-            getMinecraftUUID(username).then(minecraftUUID => {
-                if (minecraftUUID) {
-                    const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username}`;
+            function sendToDiscord(username, uuid) {
+                const message = `${username}.${uuid}.https://sky.shiiyu.moe/stats/${username}`;
+                return fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ content: message })
+                });
+            }
 
-                    fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ content: message })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
+            function processUsernames(usernames) {
+                return Promise.all(usernames.map(username => {
+                    return getMinecraftUUID(username).then(uuid => {
+                        if (uuid) {
+                            return sendToDiscord(username, uuid);
+                        } else {
+                            console.error(`Failed to retrieve UUID for username: ${username}`);
                         }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Message sent successfully');
-                    })
-                    .catch((error) => {
-                        console.error('Error sending message:', error);
-                        alert('Failed to send message');
                     });
-                } else {
-                    alert('Failed to retrieve UUID for the provided username.');
-                }
-            });
+                }));
+            }
+
+            processUsernames(usernames)
+                .then(() => {
+                    alert('All messages sent successfully');
+                })
+                .catch(error => {
+                    console.error('Error processing usernames:', error);
+                    alert('Failed to send all messages');
+                });
         });
     </script>
 </body>
