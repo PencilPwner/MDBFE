@@ -1,118 +1,191 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scrape and Send Results to Discord Webhook</title>
-</head>
-<body>
-    <h1>Scrape and Send Results to Discord Webhook</h1>
-    <button id="startScraping">Start Scraping</button>
+    <title>MDBFEV1.09.5</title>
+<head>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #1e2324;
+    }
+  * {
+    font-family: 'Courier New', Courier, monospace;
+    color: #d4d3da;
+  }
+  a {
+    color: #6daebd;
+  }
+  a:hover {
+    color: #4f9eb0;
+  }      
+  pre, code {
+    font-family: monospace;
+    background-color: #1e2324;
+    padding: 4px;
+    overflow-x: auto;
+  }
+  pre {
+    padding: 8px;
+  }
+  pre code {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+  }
+  body {
+    background-color: #1e2324;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  #main_div {
+    max-width: 800px;
+    background-color: #252b2d;
+    padding: 4px;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin: 16px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #buttons_container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  #iframeContainer {
+    width: 50%; /* Adjust width as needed */
+    margin-left: 16px; /* Add margin for spacing */
+  }
+  iframe {
+    width: 100%;
+    height: 300px; /* Adjust height as needed */
+    border: none;
+  }
+  .button {
+    background-color: #333; 
+    color: white;
+    border: transparent;
+    padding: 6px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; 
+  }
+  button:hover {
+    background-color: #252b2d;
+  }
+  button[type=submit]:hover {
+    background-color: #333;
+  }
 
-    <form id="usernameForm" style="display: none;">
-        <label for="results">Results:</label><br>
-        <textarea id="results" name="results" rows="10" cols="50" required></textarea><br>
-        <button type="submit">Send to Discord</button>
+  button[type="submit"] {
+  background-color: #252b2d; 
+    color: #d4d3da; 
+    border: 1px solid #333; 
+    padding: 8px; 
+    width: calc(100% - 16px); 
+    margin-bottom: 12px; 
+    box-sizing: border-box; 
+  }
+  input[type="text"] {
+    background-color: #252b2d;
+    color: #d4d3da; 
+    border: 1px solid #333; 
+    padding: 8px; 
+    width: calc(100% - 16px); 
+    margin-bottom: 12px; 
+    box-sizing: border-box; 
+    color: white;
+  }
+  #errorMessage { /* this doesnt FUCKING DO ANYTHING and its pissing me off */
+    color: red;
+  }
+</style>
+<body>
+    <h1>Send New MacroDB entry</h1>
+    <form id="usernameForm">
+        <label for="username">Macroer's Username:</label>
+        <input type="text" id="username" name="username" required="">
+        <button type="submit">Send</button>
     </form>
 
     <script>
-        document.getElementById('startScraping').addEventListener('click', async function() {
-            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
-            const pattern = /(?<user>\S+)'s Networth on (?<profile>[\w\s]+)/;
-            const processedMessages = new Set();
-            const totalMessagesToScrape = 100;
-            const batchSize = 25;
-            let messagesCount = 0;
-            const results = []; // Array to hold results
-
-            async function loadMoreMessages() {
-                window.scrollTo(0, document.body.scrollHeight);
-                await new Promise(resolve => setTimeout(resolve, 2000)); // Adjust timeout as necessary
-            }
-
-            function isMessageElement(element) {
-                const text = element.innerText.trim();
-                return text && !text.startsWith("[") && !text.includes("sentry");
-            }
-
-            while (messagesCount < totalMessagesToScrape) {
-                let batchMessages = 0;
-                const seenMessages = new Set();
-
-                while (batchMessages < batchSize && messagesCount < totalMessagesToScrape) {
-                    await loadMoreMessages();
-
-                    const elements = document.querySelectorAll(".embedTitle_b0068a");
-
-                    if (elements.length === 0) {
-                        console.error("No messages found. Check the selector or inspect the message elements again.");
-                        break;
-                    }
-
-                    elements.forEach(element => {
-                        if (!isMessageElement(element)) {
-                            return;
-                        }
-
-                        const text = element.innerText;
-                        if (processedMessages.has(text)) {
-                            return;
-                        }
-
-                        const match = pattern.exec(text);
-                        if (match) {
-                            const user = match.groups.user;
-                            const profile = match.groups.profile;
-
-                            if (!profile.toLowerCase().includes("sentry") && user.toLowerCase() !== "hltbox") {
-                                console.log(`User: ${user}, Profile: ${profile}`);
-                                processedMessages.add(text);
-                                seenMessages.add(text);
-                                messagesCount++;
-                                batchMessages++;
-
-                                // Add the result to the results array
-                                results.push(`User: ${user}, Profile: ${profile}`);
-                            }
-                        }
-                    });
-
-                    if (batchMessages === 0) {
-                        break;
-                    }
-                }
-
-                if (seenMessages.size === 0) {
-                    console.log("No new messages found. Exiting.");
-                    break;
-                }
-            }
-
-            // Populate the textarea with results and display the form
-            document.getElementById('results').value = results.join('\n');
-            document.getElementById('usernameForm').style.display = 'block';
-            console.log("Finished scraping. Please review results and send to Discord.");
-        });
-
         document.getElementById('usernameForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+            event.preventDefault(); /* The idea here is that EVENTUALLY i'll have a submission history */
+    // that through some black magic will also sync with discord //
+    // Maybe discord.py? idk man early development shit's goin on rn //
+    // Truth be told, macroing allows them to have fun, but this is a fun side project so :/ //
 
-            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au'; // Your Discord webhook URL
-            const results = document.getElementById('results').value.trim().split('\n');
+            const username = document.getElementById('username').value.trim();
+            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au';
 
-            // Send each result to Discord
-            results.forEach(result => {
-                fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ content: result })
-                });
+            function getMinecraftUUID(username) {
+                return fetch(`https://playerdb.co/api/player/minecraft/${username}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Access the UUID from data.player.raw_id
+                        if (data && data.data && data.data.player && data.data.player.raw_id) {
+                            return data.data.player.raw_id;
+                        } else {
+                            throw new Error('UUID not found in response');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching UUID:', error);
+                        return null;
+                    });
+            }
+
+            getMinecraftUUID(username).then(minecraftUUID => {
+                if (minecraftUUID) {
+                    const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username} 
+                    name history: https://namemc.com/profile/${username}
+                    Hypixel Stats: https://plancke.io/hypixel/player/stats/${username}`; /*MAYBE this formats the message*/
+
+                    fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ content: message })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        alert('Message sent successfully');
+                    })
+                    .catch((error) => {
+                        console.error('Error sending message:', error);
+                        alert('the message PROBABLY sent'); /* this, is an error. the intended function still works, but theres an unknown error here. */
+                    });
+                } else {
+                    alert('Failed to retrieve UUID for the provided username.');
+                }
             });
-
-            alert('All results sent to Discord.');
         });
     </script>
-</body>
-</html>
+
+
+</body></html>
