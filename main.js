@@ -31,6 +31,22 @@ document.getElementById('usernameForm').addEventListener('submit', function(even
         .catch((error) => {
             console.error('Error:', error);
             alert('Failed to send message');
+    document.getElementById('formatButton').addEventListener('click', function() {
+    const inputText = document.getElementById('inputText').value;
+    console.log('Input Text:', inputText); // Debug: Check input
+
+    const formattedText = inputText
+        .split('\n') // Split input into lines
+        .map(line => {
+            const match = line.match(/User: ([^,]+)/); // Extract the username
+            return match ? match[1] : null;
+        }) // Map each line to username or null
+        .filter(Boolean) // Remove null values
+        .join('\n'); // Join the usernames into one string
+
+    console.log('Formatted Text:', formattedText); // Debug: Check formatted text
+    document.getElementById('formattedOutput').innerText = formattedText;
+
         });
     });
 });
