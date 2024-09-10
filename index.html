@@ -1,191 +1,292 @@
 <!DOCTYPE html><html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MDBFEV1.09.5</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MDBFEV1.09.5</title>
 <head>
 <style>
-    table {
-        border-collapse: collapse;
-        width: 100%;
-    }
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
-    th {
-        background-color: #1e2324;
-    }
-  * {
-    font-family: 'Courier New', Courier, monospace;
-    color: #d4d3da;
+  table {
+      border-collapse: collapse;
+      width: 100%;
   }
-  a {
-    color: #6daebd;
+  th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
   }
-  a:hover {
-    color: #4f9eb0;
-  }      
-  pre, code {
-    font-family: monospace;
-    background-color: #1e2324;
-    padding: 4px;
-    overflow-x: auto;
+  th {
+      background-color: #1e2324;
   }
-  pre {
-    padding: 8px;
-  }
-  pre code {
-    background-color: transparent;
-    border: none;
-    padding: 0px;
-  }
-  body {
-    background-color: #1e2324;
-    width: 100%;
-    height: 100%;
-    margin: 0px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  #main_div {
-    max-width: 800px;
-    background-color: #252b2d;
-    padding: 4px;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin: 16px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  #buttons_container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  #iframeContainer {
-    width: 50%; /* Adjust width as needed */
-    margin-left: 16px; /* Add margin for spacing */
-  }
-  iframe {
-    width: 100%;
-    height: 300px; /* Adjust height as needed */
-    border: none;
-  }
-  .button {
-    background-color: #333; 
-    color: white;
-    border: transparent;
-    padding: 6px 20px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.3s ease; 
-  }
-  button:hover {
-    background-color: #252b2d;
-  }
-  button[type=submit]:hover {
-    background-color: #333;
-  }
+* {
+  font-family: 'Courier New', Courier, monospace;
+  color: #d4d3da;
+}
+a {
+  color: #6daebd;
+}
+a:hover {
+  color: #4f9eb0;
+}      
+pre, code {
+  font-family: monospace;
+  background-color: #1e2324;
+  padding: 4px;
+  overflow-x: auto;
+}
+pre {
+  padding: 8px;
+}
+pre code {
+  background-color: transparent;
+  border: none;
+  padding: 0px;
+}
+body {
+  background-color: #1e2324;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#main_div {
+  max-width: 800px;
+  background-color: #252b2d;
+  padding: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin: 16px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#buttons_container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+#iframeContainer {
+  width: 50%; /* Adjust width as needed */
+  margin-left: 16px; /* Add margin for spacing */
+}
+iframe {
+  width: 100%;
+  height: 300px; /* Adjust height as needed */
+  border: none;
+}
+.button {
+  background-color: #333; 
+  color: white;
+  border: transparent;
+  padding: 6px 20px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; 
+}
+button:hover {
+  background-color: #252b2d;
+}
+button[type=submit]:hover {
+  background-color: #333;
+}
 
-  button[type="submit"] {
-  background-color: #252b2d; 
-    color: #d4d3da; 
-    border: 1px solid #333; 
-    padding: 8px; 
-    width: calc(100% - 16px); 
-    margin-bottom: 12px; 
-    box-sizing: border-box; 
-  }
-  input[type="text"] {
-    background-color: #252b2d;
-    color: #d4d3da; 
-    border: 1px solid #333; 
-    padding: 8px; 
-    width: calc(100% - 16px); 
-    margin-bottom: 12px; 
-    box-sizing: border-box; 
-    color: white;
-  }
-  #errorMessage { /* this doesnt FUCKING DO ANYTHING and its pissing me off */
-    color: red;
-  }
+button[type="submit"] {
+background-color: #252b2d; 
+  color: #d4d3da; 
+  border: 1px solid #333; 
+  padding: 8px; 
+  width: calc(100% - 16px); 
+  margin-bottom: 12px; 
+  box-sizing: border-box; 
+}
+input[type="text"] {
+  background-color: #252b2d;
+  color: #d4d3da; 
+  border: 1px solid #333; 
+  padding: 8px; 
+  width: calc(100% - 16px); 
+  margin-bottom: 12px; 
+  box-sizing: border-box; 
+  color: white;
+}
+#errorMessage {
+  color: red;
+}
+#formatButton {
+background-color: #252b2d; 
+  color: #d4d3da; 
+  border: 1px solid #333; 
+  padding: 8px; 
+  width: calc(100% - 16px); 
+  margin-bottom: 12px; 
+  box-sizing: border-box; 
+}
+#sendBatchButton {
+background-color: #252b2d; 
+  color: #d4d3da; 
+  border: 1px solid #333; 
+  padding: 8px; 
+  width: calc(100% - 16px); 
+  margin-bottom: 12px; 
+  box-sizing: border-box; 
+}
+textarea {
+  width: calc(100% - 16px);
+  background-color: #252b2d;
+  color: white;
+  border: 1px solid #333;
+  margin-bottom: 12px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+#formattedOutput {
+  margin-top: 16px;
+  padding: 10px;
+  background-color: #252b2d;
+  color: white;
+  border: 1px solid #333;
+}
 </style>
 <body>
-    <h1>Send New MacroDB entry</h1>
-    <form id="usernameForm">
-        <label for="username">Macroer's Username:</label>
-        <input type="text" id="username" name="username" required="">
-        <button type="submit">Send</button>
-    </form>
+  <h1>Send New MacroDB entry</h1>
+  <form id="usernameForm">
+      <label for="username">Macroer's Username:</label>
+      <input type="text" id="username" name="username" required="">
+      <button type="submit">Send</button>
+  </form>
 
-    <script>
-        document.getElementById('usernameForm').addEventListener('submit', function(event) {
-            event.preventDefault(); /* The idea here is that EVENTUALLY i'll have a submission history */
-    // that through some black magic will also sync with discord //
-    // Maybe discord.py? idk man early development shit's goin on rn //
-    // Truth be told, macroing allows them to have fun, but this is a fun side project so :/ //
+  <h2>Format Text</h2>
+  <textarea id="inputText" rows="10" placeholder="Paste text here..."></textarea>
+  <button id="formatButton" class="button">Format</button>
+  <button id="sendBatchButton" class="button">Send Formatted Users</button>
+  <div id="formattedOutput"></div>
 
-            const username = document.getElementById('username').value.trim();
-            const webhookUrl = 'https://discord.com/api/webhooks/1280267213278023760/twPLCRFTM-eiSl1UlLOxe7J-Xipe0sD9TVAJW4vmf1OkGUAMO1W6E73hyf14kSzBU2Au';
+  <script>
+      const webhookUrl = 'https://discord.com/api/webhooks/1282875662809698374/LOVSotLGhfVCfVXv6XrLKpOleGc2eq383KgOj6soTJAh2_Rxs90Nw17awWEtpyAhw2Lz';
 
-            function getMinecraftUUID(username) {
-                return fetch(`https://playerdb.co/api/player/minecraft/${username}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Access the UUID from data.player.raw_id
-                        if (data && data.data && data.data.player && data.data.player.raw_id) {
-                            return data.data.player.raw_id;
-                        } else {
-                            throw new Error('UUID not found in response');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error fetching UUID:', error);
-                        return null;
-                    });
+      document.getElementById('usernameForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          const username = document.getElementById('username').value.trim();
+
+          function getMinecraftUUID(username) {
+              return fetch(`https://playerdb.co/api/player/minecraft/${username}`)
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error(`HTTP error! status: ${response.status}`);
+                      }
+                      return response.json();
+                  })
+                  .then(data => {
+                      if (data && data.data && data.data.player && data.data.player.raw_id) {
+                          return data.data.player.raw_id;
+                      } else {
+                          throw new Error('UUID not found in response');
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error fetching UUID:', error);
+                      return null;
+                  });
+          }
+
+          getMinecraftUUID(username).then(minecraftUUID => {
+              if (minecraftUUID) {
+                  const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username} 
+                  name history: https://namemc.com/profile/${username}
+                  Hypixel Stats: https://plancke.io/hypixel/player/stats/${username}`;
+
+                  fetch(webhookUrl, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ content: message })
+                  })
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error(`HTTP error! status: ${response.status}`);
+                      }
+                      return response.json();
+                  })
+                  .then(data => {
+                      alert('Message sent successfully');
+                  })
+                  .catch((error) => {
+                      console.error('Error sending message:', error);
+                      alert('the message PROBABLY sent');
+                  });
+              } else {
+                  alert('Failed to retrieve UUID for the provided username.');
+              }
+          });
+      });
+      function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+      // Format text button logic
+      document.getElementById('formatButton').addEventListener('click', function() {
+          const inputText = document.getElementById('inputText').value;
+          const formattedText = inputText
+              .split('\n')
+              .map(line => line.match(/User: ([^,]+)/)?.[1]) // Extracts the username
+              .filter(Boolean) // Removes null values
+              .join('\n'); // Joins the usernames into one string
+          document.getElementById('formattedOutput').innerText = formattedText;
+      });
+
+      // Send batch webhook messages
+      document.getElementById('sendBatchButton').addEventListener('click', function() {
+          const formattedText = document.getElementById('formattedOutput').innerText;
+          const users = formattedText.split('\n').filter(Boolean); // Get each username
+
+          users.forEach(username => {
+              // Fetch UUID and send individual webhook messages
+              fetch(`https://playerdb.co/api/player/minecraft/${username}`)
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data && data.data && data.data.player && data.data.player.raw_id) {
+                          const minecraftUUID = data.data.player.raw_id;
+                          const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username} 
+                          name history: https://namemc.com/profile/${username}
+                          Hypixel Stats: https://plancke.io/hypixel/player/stats/${username}`;
+
+                          // Send webhook message
+                          fetch(webhookUrl, {
+                              method: 'POST',
+                              headers: {
+                                  'Content-Type': 'application/json'
+                              },
+                              body: JSON.stringify({ content: message })
+                          })
+                          .then(response => {
+                              if (!response.ok) {
+                                  throw new Error(`HTTP error! status: ${response.status}`);
+                              }
+                              return response.json();
+                          })
+                          .then(data => {
+                              console.log(`Message for ${username} sent successfully.`);
+                          })
+                          .catch((error) => {
+                              console.error(`Error sending message for ${username}:`, error);
+                          });
+                      } else {
+                          console.error(`Failed to fetch UUID for ${username}`);
+                      }
+                  })
+                  .catch(error => {
+                      console.error(`Error fetching UUID for ${username}:`, error);
+                  });
+          });
+      });
+      await delay(1000); // 1 second delay
+            } catch (error) {
+                console.error(`Error sending message for ${username}:`, error);
             }
-
-            getMinecraftUUID(username).then(minecraftUUID => {
-                if (minecraftUUID) {
-                    const message = `${username}.${minecraftUUID}.https://sky.shiiyu.moe/stats/${username} 
-                    name history: https://namemc.com/profile/${username}
-                    Hypixel Stats: https://plancke.io/hypixel/player/stats/${username}`; /*MAYBE this formats the message*/
-
-                    fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ content: message })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Message sent successfully');
-                    })
-                    .catch((error) => {
-                        console.error('Error sending message:', error);
-                        alert('the message PROBABLY sent'); /* this, is an error. the intended function still works, but theres an unknown error here. */
-                    });
-                } else {
-                    alert('Failed to retrieve UUID for the provided username.');
-                }
-            });
-        });
-    </script>
-
-
-</body></html>
+          
+  </script>
+</body>
+</html>
